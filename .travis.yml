@@ -1,0 +1,10 @@
+language: go
+
+go:
+  - 1.14.x
+
+before_install:
+  - go get -u github.com/kyoh86/richgo
+
+script:
+  - make test
