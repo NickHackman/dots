@@ -5,6 +5,8 @@ go:
 
 before_install:
   - go get -u github.com/kyoh86/richgo
+  - go get github.com/mattn/goveralls
 
 script:
   - make test
+  - $GOPATH/bin/goveralls -service=travis-ci
