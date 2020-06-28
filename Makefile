@@ -8,7 +8,7 @@ else
 	GO_TEST := richgo
 endif
 
-.PHONY: install_deps test fmt vet clean run build
+.PHONY: install_deps test fmt vet clean
 
 default: all
 
@@ -29,14 +29,6 @@ install_deps:
 fmt:
 	$(info --------------------- checking formatting ---------------------)
 	@test -z $(shell gofmt -l $(SRC)) || (gofmt -d $(SRC); exit 1)
-
-run:
-	$(info --------------------- running ---------------------)
-	go run .
-
-build:
-	$(info --------------------- building ---------------------)
-	go build ./...
 
 clean:
 	rm -rf $(BIN)
