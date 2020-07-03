@@ -3,6 +3,12 @@ language: go
 go:
   - 1.14.x
 
+dist: bionic
+addons:
+  apt:
+    packages:
+      - libgit2-glib-1.0-0
+
 before_install:
   - go get -u github.com/kyoh86/richgo
   - go get github.com/mattn/goveralls
