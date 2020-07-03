@@ -1,19 +1,3 @@
-# Dots
-
-[![Build Status](https://travis-ci.org/NickHackman/dots.svg?branch=master)](https://travis-ci.org/NickHackman/dots)
-[![Coverage Status](https://coveralls.io/repos/github/NickHackman/dots/badge.svg?branch=master)](https://coveralls.io/github/NickHackman/dots?branch=master)
-[![Go Report Card](https://goreportcard.com/badge/github.com/NickHackman/dots)](https://goreportcard.com/report/github.com/NickHackman/dots)
-
-A distributed dotfile manager written in Go
-
-All you have to do is create a `.dots.yml` file in the root of your git repository
-and then it will be easily installable! For an example `.dots.yml` refer to [example](#example)
-
-## Example
-
-A `.dots.yml` configuration file looks like
-
-```yaml
 # This file is metadata that Dots will read to install
 # the dotfiles in your repository locally on a new machine.
 #
@@ -110,4 +94,3 @@ dotfiles:
     #
     # Optional field
     install_children: true
-```
