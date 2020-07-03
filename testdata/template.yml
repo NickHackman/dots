@@ -1,0 +1,12 @@
+name: YourName/dotfiles
+license: GPLv3
+URL: https://github.com/NickHackman/dots
+dotfiles:
+  - name: bspwm
+    description: A simple configuration file for the Binary Space Partition Window Manager
+    source: <root>/bspwm
+    destination: ~/.config/bspwm
+  - name: keybinds
+    description: Keybindings that escape <-> capslock and handle function keys
+    destination: "~"
+    install_children: true
