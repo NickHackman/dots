@@ -15,19 +15,15 @@ default: all
 all: install_deps vet fmt test
 
 vet:
-	$(info --------------------- vetting ---------------------)
 	go vet ./...
 
 test:
-	$(info --------------------- testing ---------------------)
 	$(GO_TEST) test -v ./...
 
 install_deps:
-	$(info --------------------- downloading dependencies ---------------------)
 	go get -v ./...
 
 fmt:
-	$(info --------------------- checking formatting ---------------------)
 	@test -z $(shell gofmt -l $(SRC)) || (gofmt -d $(SRC); exit 1)
 
 clean:
