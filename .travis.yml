@@ -4,9 +4,9 @@ go:
   - 1.14.x
 
 before_install:
+  - ./ci/libgit2_build.sh
   - go get -u github.com/kyoh86/richgo
   - go get github.com/mattn/goveralls
-  - ./ci/libgit2_build.sh
 
 script:
   - make test

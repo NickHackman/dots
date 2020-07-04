@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-go get -d github.com/libgit2/git2go 
-cd "${GOPATH}"/src/github.com/libgit2/git2go || exit 1
-git checkout next
-git submodule update --init # get libgit2
-make install
-
+git clone --depth=1 -b maint/v1.0 https://github.com/libgit2/libgit2.git
+mkdir libgit2/build
+cd libgit2/build || exit 1
+cmake .. -DCMAKE_INSTALL_PREFIX=../_install -DBUILD_CLAR=OFF
+cmake --build . --target install
