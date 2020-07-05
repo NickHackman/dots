@@ -109,24 +109,6 @@ func TestValidParse(t *testing.T) {
 						Source:      fmt.Sprintf("%s%ctest1", testData, os.PathSeparator),
 						Destination: fmt.Sprintf("%s%ctest1", configDir, os.PathSeparator),
 					},
-					{
-						Name:        "test2",
-						Description: "",
-						Source:      fmt.Sprintf("%s%ctest2", testData, os.PathSeparator),
-						Destination: fmt.Sprintf("%s%ctest2", configDir, os.PathSeparator),
-					},
-					{
-						Name:        "test3",
-						Description: "",
-						Source:      fmt.Sprintf("%s%ctest3", testData, os.PathSeparator),
-						Destination: fmt.Sprintf("%s%ctest3", configDir, os.PathSeparator),
-					},
-					{
-						Name:        "test4",
-						Description: "",
-						Source:      fmt.Sprintf("%s%ctest4", testData, os.PathSeparator),
-						Destination: fmt.Sprintf("%s%ctest4", configDir, os.PathSeparator),
-					},
 				},
 			},
 		},
@@ -136,7 +118,7 @@ func TestValidParse(t *testing.T) {
 		fullPathSlash := filepath.Join(testData, test.path)
 		fullPath := filepath.FromSlash(fullPathSlash)
 
-		t.Run(fullPath[1:], func(t *testing.T) {
+		t.Run(test.path, func(t *testing.T) {
 			DotsConfig, err := ParseFile(fullPath)
 			assert.NoError(t, err)
 			assert.Equal(t, test.expected, DotsConfig)
