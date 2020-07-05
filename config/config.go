@@ -12,7 +12,7 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
-// A Dots config
+// DotsConfig a Dots config
 type DotsConfig struct {
 	Name     string    `yaml:"name"`     // Name that recognizes a set of dotfiles generally YourNameOrUsername/dotfiles
 	License  string    `yaml:"license"`  // License used for dotfiles
@@ -20,7 +20,7 @@ type DotsConfig struct {
 	Dotfiles []Dotfile `yaml:"dotfiles"` // Dotfiles themselves
 }
 
-// A specific dotfile
+// Dotfile a specific dotfile
 type Dotfile struct {
 	Name            string `yaml:"name"`             // Name that will be used to identify this specific Dotfile
 	Description     string `yaml:"description"`      // Describe this specific dotfile or collection of dotfiles
@@ -51,7 +51,7 @@ func findConfigInDir(dir string) (string, error) {
 	return "", fmt.Errorf("'.dots.ya?ml' doesn't exist in dir %s", dir)
 }
 
-// Parse 'dots.(yml|yaml) in root of the git repository
+// Parse a 'dots.(yml|yaml) in root of the git repository
 //
 // expects to find a 'dots.(yml|yaml)' file in the root of the git repository
 func Parse() (*DotsConfig, error) {
@@ -68,7 +68,7 @@ func Parse() (*DotsConfig, error) {
 	return ParseFile(configPath)
 }
 
-// Expands environemnt variables and '~' in Destination
+// Expands environment variables and '~' in Destination
 //
 // If Dotfile.Destination isn't set, set it to its default value `~/.config/$name`
 func (dot *Dotfile) expandDestination() error {
@@ -107,7 +107,7 @@ func (dot *Dotfile) expandSource(projectRoot string) {
 	}
 }
 
-// Parses 'dots.(yml|yaml)' file
+// ParseFile parses a 'dots.(yml|yaml)' file
 func ParseFile(path string) (*DotsConfig, error) {
 	bytes, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -128,7 +128,7 @@ func ParseFile(path string) (*DotsConfig, error) {
 	return &dotsConf, nil
 }
 
-// Parse 'dots.(yml|yaml) in root of the git repository
+// ParseGit parses a 'dots.(yml|yaml) in root of the git repository
 //
 // expects to find a 'dots.(yml|yaml)' file in the root of the git repository
 func ParseGit(gitRepo *git.Repository) (*DotsConfig, error) {
