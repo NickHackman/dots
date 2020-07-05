@@ -38,11 +38,13 @@ jobs:
       - name: Build
         run: go build -v .
 
-      - name: Install Richgo
-        run: go install github.com/kyoh86/richgo
-
       - name: Test
-        run: richgo test -v -coverprofile=profile.cov ./...
+        run: |
+          go install github.com/kyoh86/richgo
+          richgo test -v -coverprofile=profile.cov ./...
+
+      - name: Vet
+        run: go vet ./...
 
       - name: Send coverage
         uses: shogo82148/actions-goveralls@v1
