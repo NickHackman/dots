@@ -23,6 +23,7 @@ jobs:
         id: cache-libgit2
         uses: actions/cache@v2
         with:
+          key: cache-libgit2
           path: |
             /usr/lib/pkgconfig/libgit2.pc
             /usr/lib/libgit2.so.1.0.0
