@@ -47,6 +47,14 @@ jobs:
           sudo ln -s /usr/lib/libgit2.so.1.0.0 /usr/lib/libgit2.so
           sudo cp -aR ../include/* /usr/local/include/
 
+      - name: Fix libgit2 permissions
+        if: steps.cache-libgit2.outputs.cache-hit != 'true'
+        run: |
+          sudo chown -R $(whoami):$(id -ng) /usr/lib/pkgconfig/libgit2.pc
+          sudo chown -R $(whoami):$(id -ng) /usr/lib/libgit2.so.1.0.0
+          sudo chown -R $(whoami):$(id -ng) /usr/lib/libgit2.so.1.0
+          sudo chown -R $(whoami):$(id -ng) /usr/lib/libgit2.so
+
       - name: Build
         run: go build -v .
 
