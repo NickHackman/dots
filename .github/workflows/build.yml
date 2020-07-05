@@ -19,7 +19,18 @@ jobs:
         run: |
           go get -v -t -d ./...
 
+      - name: Cache Libgit2
+        id: cache-libgit2
+        uses: actions/cache@v2
+        with:
+          path:
+            - /usr/lib/pkgconfig/libgit2.pc
+            - /usr/lib/libgit2.so.1.0.0
+            - /usr/lib/libgit2.so.1.0
+            - /usr/lib/libgit2.so
+
       - name: Build libgit2
+        if: steps.cache-libgit2.outputs.cache-hit != 'true'
         run: |
           cd /tmp
           rm -fr libgit2-1.0.0.tar.gz libgit2-1.0.0
