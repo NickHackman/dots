@@ -117,13 +117,24 @@ func TestValidateInvalid(t *testing.T) {
 				Err: fmt.Errorf("dotfile `bspwm` has `install_children` set, but has 0 children in source `%s`", filepath.Join(testData, "bspwm")),
 			},
 		},
+		{
+			path: "invalid-dot-blank-description.yml",
+			validationError: &config.ValidationError{
+				Warnings: []*config.Warning{{Message: "dotfile `bspwm` description shouldn't be left blank"}},
+				Err:      nil,
+			},
+		},
 	}
 
 	for _, test := range tests {
 		t.Run(test.path, func(t *testing.T) {
 			path := filepath.Join(testData, test.path)
 			validationError := config.Validate(path)
+			if test.validationError.IsErr() {
+				assert.True(t, validationError.IsErr())
+			}
 			assert.Equal(t, validationError, test.validationError)
+			assert.Equal(t, validationError.Error(), test.validationError.Error())
 		})
 	}
 
