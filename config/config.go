@@ -67,11 +67,12 @@ func findConfig(startDir string) (string, error) {
 	return "", &MountPointError{StartPoint: startDir, EndPoint: current}
 }
 
-// Parse a 'dots.(yml|yaml) in root of the git repository
+// Parse a `.dots.ya?ml`, starting from `start` progress upwards towards mount point.
+// If mount point is reached a `MountPointError` is returned.
 //
-// expects to find a 'dots.(yml|yaml)' file in the root of the git repository
-func Parse() (*DotsConfig, error) {
-	abs, err := filepath.Abs(".")
+// Expects to find `.dots.ya?ml` in a parent dirctory of the current directory
+func Parse(start string) (*DotsConfig, error) {
+	abs, err := filepath.Abs(start)
 	if err != nil {
 		return nil, err
 	}

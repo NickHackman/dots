@@ -120,13 +120,23 @@ func TestValidParse(t *testing.T) {
 	}
 }
 
-func TestParse(t *testing.T) {
+func TestParseCWD(t *testing.T) {
 	abs, err := filepath.Abs(".")
 	assert.NoErrorf(t, err, "failed to setup config_test.go testing couldn't get absolute path of `.`: %w", err)
 	current, previous := abs, ""
 	for current != previous {
 		current, previous = filepath.Dir(current), current
 	}
-	_, err = config.Parse()
+	_, err = config.Parse(abs)
 	assert.EqualError(t, err, fmt.Sprintf("failed to find `.dots.ya?ml` starting from: `%s` reached mount point `%s`", abs, current))
+}
+
+func TestParseValid(t *testing.T) {
+	testData, err := pathToTestData()
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing: %w", err)
+
+	abs, err := filepath.Abs(filepath.Join(testData, "bspwm"))
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing couldn't get absolute path of `.`: %w", err)
+	_, err = config.Parse(abs)
+	assert.NoError(t, err)
 }
