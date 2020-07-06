@@ -1,0 +1,12 @@
+name: YourName/dotfiles
+license: GPLv3
+URL: https://github.com/NickHackman/dots
+dotfiles:
+  - name: bspwm
+    description: description
+
+  - name: keybinds
+    description: description
+
+  - name: bspwm
+    description: description

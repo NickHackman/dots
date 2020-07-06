@@ -1,0 +1,6 @@
+name:
+license: GPLv3
+URL: https://github.com/NickHackman/dots
+dotfiles:
+  - name: bspwm
+    description: description
