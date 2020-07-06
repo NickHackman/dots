@@ -1,0 +1,6 @@
+name: YourName/dotfiles
+license: GPLv3
+URL: https://github.com/NickHackman/dots
+dotfiles:
+  - name: test2
+    description: description

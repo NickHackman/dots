@@ -1,0 +1,5 @@
+name: YourName/dotfiles
+license:
+URL: https://github.com/NickHackman/dots
+dotfiles:
+  - name: bspwm
