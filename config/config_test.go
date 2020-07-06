@@ -1,4 +1,4 @@
-package config
+package config_test
 
 import (
 	"errors"
@@ -8,6 +8,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/NickHackman/dots/config"
 	git "github.com/libgit2/git2go/v30"
 	"github.com/stretchr/testify/assert"
 )
@@ -26,31 +27,25 @@ func pathToTestData() (string, error) {
 
 func TestValidParse(t *testing.T) {
 	testData, err := pathToTestData()
-	if err != nil {
-		t.Errorf("failed to setup config_test.go testing: %w", err)
-	}
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing: %w", err)
 
 	configDir, err := os.UserConfigDir()
-	if err != nil {
-		t.Errorf("failed to setup config_test.go testing can't locate `$XDG_CONFIG_HOME`: %w", err)
-	}
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing can't locate `$XDG_CONFIG_HOME`: %w", err)
 
 	homeDir, err := os.UserHomeDir()
-	if err != nil {
-		t.Errorf("failed to setup config_test.go testing can't locate `$HOME`: %w", err)
-	}
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing can't locate `$HOME`: %w", err)
 
 	tests := []struct {
 		path     string
-		expected *DotsConfig
+		expected *config.DotsConfig
 	}{
 		{
 			path: "template.yml",
-			expected: &DotsConfig{
+			expected: &config.DotsConfig{
 				Name:    "YourName/dotfiles",
 				License: "GPLv3",
 				URL:     "https://github.com/NickHackman/dots",
-				Dotfiles: []Dotfile{
+				Dotfiles: []config.Dotfile{
 					{
 						Name:        "bspwm",
 						Description: "A simple configuration file for the Binary Space Partition Window Manager",
@@ -69,7 +64,7 @@ func TestValidParse(t *testing.T) {
 		},
 		{
 			path: "no-dotfiles.yml",
-			expected: &DotsConfig{
+			expected: &config.DotsConfig{
 				Name:    "YourName/dotfiles",
 				License: "GPLv3",
 				URL:     "https://github.com/NickHackman/dots",
@@ -77,7 +72,7 @@ func TestValidParse(t *testing.T) {
 		},
 		{
 			path: "empty-dotfiles.yml",
-			expected: &DotsConfig{
+			expected: &config.DotsConfig{
 				Name:    "YourName/dotfiles",
 				License: "GPLv3",
 				URL:     "https://github.com/NickHackman/dots",
@@ -85,11 +80,11 @@ func TestValidParse(t *testing.T) {
 		},
 		{
 			path: "many-dotfiles.yml",
-			expected: &DotsConfig{
+			expected: &config.DotsConfig{
 				Name:    "YourName/dotfiles",
 				License: "GPLv3",
 				URL:     "https://github.com/NickHackman/dots",
-				Dotfiles: []Dotfile{
+				Dotfiles: []config.Dotfile{
 					{
 						Name:        "bspwm",
 						Description: "A simple configuration file for the Binary Space Partition Window Manager",
@@ -105,7 +100,7 @@ func TestValidParse(t *testing.T) {
 					},
 					{
 						Name:        "test1",
-						Description: "",
+						Description: "description",
 						Source:      fmt.Sprintf("%s%ctest1", testData, os.PathSeparator),
 						Destination: fmt.Sprintf("%s%ctest1", configDir, os.PathSeparator),
 					},
@@ -119,7 +114,7 @@ func TestValidParse(t *testing.T) {
 		fullPath := filepath.FromSlash(fullPathSlash)
 
 		t.Run(test.path, func(t *testing.T) {
-			DotsConfig, err := ParseFile(fullPath)
+			DotsConfig, err := config.ParseFile(fullPath)
 			assert.NoError(t, err)
 			assert.Equal(t, test.expected, DotsConfig)
 		})
@@ -128,20 +123,20 @@ func TestValidParse(t *testing.T) {
 
 func TestParseGit(t *testing.T) {
 	gitPath, err := git.Discover(".", true, nil)
-	assert.NoError(t, err)
+	assert.NoErrorf(t, err, "failed to discover git repository: %w", err)
 	repo, err := git.OpenRepository(gitPath)
-	assert.NoError(t, err)
+	assert.NoErrorf(t, err, "failed to open git repository: %w", err)
 	testData, err := pathToTestData()
-	assert.NoError(t, err)
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing: %w", err)
 	root := filepath.Dir(testData)
-	_, err = ParseGit(repo)
+	_, err = config.ParseGit(repo)
 	assert.EqualError(t, err, fmt.Sprintf("'.dots.ya?ml' doesn't exist in dir %s", root))
 }
 
 func TestParse(t *testing.T) {
 	testData, err := pathToTestData()
-	assert.NoError(t, err)
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing: %w", err)
 	root := filepath.Dir(testData)
-	_, err = Parse()
+	_, err = config.Parse()
 	assert.EqualError(t, err, fmt.Sprintf("'.dots.ya?ml' doesn't exist in dir %s", root))
 }
