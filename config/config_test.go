@@ -9,7 +9,6 @@ import (
 	"testing"
 
 	"github.com/NickHackman/dots/config"
-	git "github.com/libgit2/git2go/v30"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -121,22 +120,23 @@ func TestValidParse(t *testing.T) {
 	}
 }
 
-func TestParseGit(t *testing.T) {
-	gitPath, err := git.Discover(".", true, nil)
-	assert.NoErrorf(t, err, "failed to discover git repository: %w", err)
-	repo, err := git.OpenRepository(gitPath)
-	assert.NoErrorf(t, err, "failed to open git repository: %w", err)
-	testData, err := pathToTestData()
-	assert.NoErrorf(t, err, "failed to setup config_test.go testing: %w", err)
-	root := filepath.Dir(testData)
-	_, err = config.ParseGit(repo)
-	assert.EqualError(t, err, fmt.Sprintf("'.dots.ya?ml' doesn't exist in dir %s", root))
+func TestParseCWD(t *testing.T) {
+	abs, err := filepath.Abs(".")
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing couldn't get absolute path of `.`: %w", err)
+	current, previous := abs, ""
+	for current != previous {
+		current, previous = filepath.Dir(current), current
+	}
+	_, err = config.Parse(abs)
+	assert.EqualError(t, err, fmt.Sprintf("failed to find `.dots.ya?ml` starting from: `%s` reached mount point `%s`", abs, current))
 }
 
-func TestParse(t *testing.T) {
+func TestParseValid(t *testing.T) {
 	testData, err := pathToTestData()
 	assert.NoErrorf(t, err, "failed to setup config_test.go testing: %w", err)
-	root := filepath.Dir(testData)
-	_, err = config.Parse()
-	assert.EqualError(t, err, fmt.Sprintf("'.dots.ya?ml' doesn't exist in dir %s", root))
+
+	abs, err := filepath.Abs(filepath.Join(testData, "bspwm"))
+	assert.NoErrorf(t, err, "failed to setup config_test.go testing couldn't get absolute path of `.`: %w", err)
+	_, err = config.Parse(abs)
+	assert.NoError(t, err)
 }

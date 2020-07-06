@@ -8,7 +8,6 @@ import (
 	"regexp"
 	"strings"
 
-	git "github.com/libgit2/git2go/v30"
 	"gopkg.in/yaml.v3"
 )
 
@@ -33,35 +32,52 @@ const (
 	configRegexp = `\.dots\.ya?ml`
 )
 
-// Finds .dots.ya?ml in a directory
-//
-// In the case both .dots.yaml and .dots.yml exist .dots.yml will be chosen
-func findConfigInDir(dir string) (string, error) {
-	files, err := ioutil.ReadDir(dir)
-	if err != nil {
-		return "", fmt.Errorf("failed to read directory `%s`: %w", dir, err)
-	}
-
-	configRegex := regexp.MustCompile(configRegexp)
-	for _, file := range files {
-		if configRegex.MatchString(file.Name()) {
-			return file.Name(), nil
-		}
-	}
-	return "", fmt.Errorf("'.dots.ya?ml' doesn't exist in dir %s", dir)
+// MountPointError is an error dictating that when searching for a `.dots.ya?ml` file
+// one could not be found until it reached the mount point
+type MountPointError struct {
+	StartPoint string // Directory where search started at
+	EndPoint   string // Highest directory found that ended discovery, generally `/` (on Unix)
 }
 
-// Parse a 'dots.(yml|yaml) in root of the git repository
+// Error returns a String stating that the start p
+func (mpe *MountPointError) Error() string {
+	return fmt.Sprintf("failed to find `.dots.ya?ml` starting from: `%s` reached mount point `%s`", mpe.StartPoint, mpe.EndPoint)
+}
+
+// Finds .dots.ya?ml going upward till root is reached
 //
-// expects to find a 'dots.(yml|yaml)' file in the root of the git repository
-func Parse() (*DotsConfig, error) {
-	path, err := git.Discover(".", true, nil)
-	if err != nil {
-		return nil, fmt.Errorf("failed to discover git repository in `.`: %w", err)
+// Root is determined if calling filepath.Dir(current) results in the same
+// path as seen in this example https://golang.org/pkg/path/filepath/#Dir
+func findConfig(startDir string) (string, error) {
+	previous, current := "", startDir
+	configRegex := regexp.MustCompile(configRegexp)
+
+	for previous != current {
+		files, err := ioutil.ReadDir(current)
+		if err != nil {
+			return "", fmt.Errorf("failed to read directory `%s`: %w", current, err)
+		}
+		for _, file := range files {
+			if configRegex.MatchString(file.Name()) {
+				return filepath.Join(current, file.Name()), nil
+			}
+		}
+		previous, current = current, filepath.Dir(current)
 	}
-	gitDir := filepath.Dir(path)
-	root := filepath.Dir(gitDir)
-	configPath, err := findConfigInDir(root)
+	return "", &MountPointError{StartPoint: startDir, EndPoint: current}
+}
+
+// Parse a `.dots.ya?ml`, starting from `start` progress upwards towards mount point.
+// If mount point is reached a `MountPointError` is returned.
+//
+// Expects to find `.dots.ya?ml` in a parent dirctory of the current directory
+func Parse(start string) (*DotsConfig, error) {
+	abs, err := filepath.Abs(start)
+	if err != nil {
+		return nil, err
+	}
+
+	configPath, err := findConfig(abs)
 	if err != nil {
 		return nil, err
 	}
@@ -126,17 +142,4 @@ func ParseFile(path string) (*DotsConfig, error) {
 		}
 	}
 	return &dotsConf, nil
-}
-
-// ParseGit parses a 'dots.(yml|yaml) in root of the git repository
-//
-// expects to find a 'dots.(yml|yaml)' file in the root of the git repository
-func ParseGit(gitRepo *git.Repository) (*DotsConfig, error) {
-	dir := filepath.Dir(gitRepo.Workdir())
-	configPath, err := findConfigInDir(dir)
-	if err != nil {
-		return nil, err
-	}
-
-	return ParseFile(configPath)
 }

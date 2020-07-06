@@ -19,22 +19,6 @@ jobs:
         run: |
           go get -v -t -d ./...
 
-      - name: Build libgit2
-        run: |
-          cd /tmp
-          rm -fr libgit2-1.0.0.tar.gz libgit2-1.0.0
-          curl -Lv -O https://github.com/libgit2/libgit2/releases/download/v1.0.0/libgit2-1.0.0.tar.gz
-          tar xvfz libgit2-1.0.0.tar.gz
-          mkdir -p libgit2-1.0.0/build
-          cd libgit2-1.0.0/build
-          cmake ..
-          cmake --build .
-          sudo cp libgit2.pc /usr/lib/pkgconfig/
-          sudo cp libgit2.so.1.0.0 /usr/lib
-          sudo ln -s /usr/lib/libgit2.so.1.0.0 /usr/lib/libgit2.so.1.0
-          sudo ln -s /usr/lib/libgit2.so.1.0.0 /usr/lib/libgit2.so
-          sudo cp -aR ../include/* /usr/local/include/
-
       - name: Build
         run: go build -v .
 
