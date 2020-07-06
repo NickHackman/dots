@@ -45,7 +45,13 @@ func TestValidateInvalid(t *testing.T) {
 	assert.NoErrorf(t, err, "failed to setup validate_test.go testing: %w", err)
 
 	homeDir, err := os.UserHomeDir()
-	assert.NoErrorf(t, err, "failed to setup config_test.go testing can't locate `$HOME`: %w", err)
+	assert.NoErrorf(t, err, "failed to setup validate_test.go testing can't locate `$HOME`: %w", err)
+
+	bspwmGitKeepPath := filepath.Join(testData, "bspwm", ".gitkeep")
+	if _, err = os.Stat(bspwmGitKeepPath); !os.IsNotExist(err) {
+		err = os.Remove(bspwmGitKeepPath)
+		assert.NoErrorf(t, err, "failed to setup validate_test.go testing can't remove `%s`: %w", bspwmGitKeepPath, err)
+	}
 
 	tests := []struct {
 		path            string
@@ -120,4 +126,7 @@ func TestValidateInvalid(t *testing.T) {
 			assert.Equal(t, validationError, test.validationError)
 		})
 	}
+
+	_, err = os.Create(bspwmGitKeepPath)
+	assert.NoError(t, err)
 }
