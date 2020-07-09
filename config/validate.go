@@ -48,13 +48,12 @@ func Validate(path string) *ValidationError {
 	validator.validateName()
 
 	if validator.dotsConf.License == "" {
-		validator.validErr.Err = errors.New("license is required, if you're not sure which license consult https://choosealicense.com/")
-		return validator.validErr
+		err := errors.New("license is required, if you're not sure which license consult https://choosealicense.com/")
+		return &ValidationError{Err: err, Warnings: validator.validErr.Warnings}
 	}
 
 	if err = validator.validateDots(); err != nil {
-		validator.validErr.Err = err
-		return validator.validErr
+		return &ValidationError{Err: err, Warnings: validator.validErr.Warnings}
 	}
 
 	if len(validator.validErr.Warnings) != 0 {

@@ -44,11 +44,11 @@ func (mpe *MountPointError) Error() string {
 	return fmt.Sprintf("failed to find `.dots.ya?ml` starting from: `%s` reached mount point `%s`", mpe.StartPoint, mpe.EndPoint)
 }
 
-// Finds .dots.ya?ml going upward till root is reached
+// FindConfig finds .dots.ya?ml going upward till root is reached
 //
 // Root is determined if calling filepath.Dir(current) results in the same
 // path as seen in this example https://golang.org/pkg/path/filepath/#Dir
-func findConfig(startDir string) (string, error) {
+func FindConfig(startDir string) (string, error) {
 	previous, current := "", startDir
 	configRegex := regexp.MustCompile(configRegexp)
 
@@ -77,7 +77,7 @@ func Parse(start string) (*DotsConfig, error) {
 		return nil, err
 	}
 
-	configPath, err := findConfig(abs)
+	configPath, err := FindConfig(abs)
 	if err != nil {
 		return nil, err
 	}
